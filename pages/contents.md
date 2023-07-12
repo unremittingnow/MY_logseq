@@ -908,7 +908,7 @@
 						  collapsed:: true
 							- ![image.png](../assets/image_1682345176301_0.png)
 							-
-				- # Nginx
+				- # Nginx【中间件】
 				- # 前后端分离
 				  collapsed:: true
 					- 问题：效率低
@@ -1140,6 +1140,151 @@
 				- 秒杀服务
 			- Sentinel
 			- Sleuth
+		- 秒杀
+			- `E:/我的文件_E/开发准备/2-project/Sec_Kill/seckill_demo-master/seckill_demo-master/document/Java秒杀方案.pdf`
+			- 介绍
+			  collapsed:: true
+				- ![image.png](../assets/image_1688699506361_0.png)
+			- #### 创建步骤
+			  collapsed:: true
+				- 选择Spring initial新建
+				- pom.xml
+				- application.yml
+				- 目录构建
+				- 启动类@MapperScan
+				- 测试controller：democontroller
+					- @controller
+					- @requestmapping
+				- 构建hello.html
+				-
+			- 项目报错：
+			  collapsed:: true
+				- （1）mysql依赖报错：导入新的mysql依赖，可能是旧版本已经不适用
+			- 1-两次MD5加密
+			  collapsed:: true
+				- 什么时候？
+				  collapsed:: true
+					- （1）用户端输入明文密码传入后端时候
+						- 防止用户密码在传输过程中明文传输
+					- （2）在后端接收数据之后、存入数据库之前
+						- 防止数据库被盗用之后还原密码（根据salt和密文）
+				- 操作步骤：
+				  collapsed:: true
+					- （1）数据库构建
+					- （2）MD5依赖
+					- （3）MD5Util工具类
+			- #### 2-逆向工程-准备工作
+			  collapsed:: true
+				- （1）新建项目
+				- （2）启动类
+				- （3）Mabatis依赖--pom.xml
+				  collapsed:: true
+					- https://baomidou.com/pages/d357af/#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96
+				- （4-1）逆向工程工具类【不能用】
+					- 报错解决：
+					- https://blog.csdn.net/weixin_42396266/article/details/124162287
+					- https://gitee.com/guizhizhe/code-generator/blob/master/src/main/java/com/generator/generator/CodeGenerator.java
+				- （4-2）代码生成【可用】
+					- Mybatis-X和Easy-code
+					- https://blog.csdn.net/wnrun/article/details/124274017
+					  id:: 64accdfb-17d6-4d47-8ffb-3e5594f5ceec
+					- https://blog.csdn.net/Aqting/article/details/123622714
+				- （5）启动类@MapperScan
+				- （6）postman测试
+					- https://blog.csdn.net/m0_61843874/article/details/123324727
+					- https://blog.csdn.net/fxbin123/article/details/80428216
+				- （7）静态资源
+				- （8）枚举类和公共返回对象实体类
+			- #### 3-登录功能开发
+			  collapsed:: true
+				- （1）页面测试-thymeleaf方式
+				  collapsed:: true
+					- 步骤
+						- 1-依赖导入
+						- 2-yml配置文件
+						- 3-用thymeleaf模板创建html
+						- 4-controller中进行路径映射【注意】
+							- 【注意】
+							- return 的字符串是对应html的路径
+				- （2）页面测试-jsp方式
+				  collapsed:: true
+					- 步骤：
+					  collapsed:: true
+						- 1-在  `src/main/webapp/WEB-INF`  目录下创建一个名为  `login.jsp`  的 JSP 文件
+						- 2-在  `login.jsp`  文件中添加以下代码：
+						  collapsed:: true
+							- ```
+							  <%@ page language="java" contentType="text/html; charset=UTF-8"
+							      pageEncoding="UTF-8"%>
+							  <!DOCTYPE html>
+							  <html>
+							  <head>
+							      <meta charset="UTF-8">
+							      <title>Login测试</title>
+							  </head>
+							  <body>
+							      <h1>Returned Value: <%= request.getAttribute("login") %></h1>
+							  </body>
+							  </html>
+							  ```
+						- 3-controller
+						  collapsed:: true
+							- ```
+							  @RequestMapping("/toLogin")
+							  public ModelAndView toLogin() {
+							      ModelAndView modelAndView = new ModelAndView("login");
+							      modelAndView.addObject("login", "success");
+							      return modelAndView;
+							  }
+							  ```
+				- （3）vo对象用来传递接收的登陆参数
+				- （4）controller 中
+					- doLogin函数
+					- 注入service，跳转到service层
+				- （5）service层接口和实现类分别添加逻辑doLogin抽象方法和重写方法【】
+					- 【注意】：实现类中重写的方法设成public
+					  background-color:: #787f97
+				- （6）校验类LoginUtil--ValidatorUtil
+			- #### 4-参数校验
+				- （1）依赖
+					- ```
+					  <!--        参数校验-->
+					          <dependency>
+					              <groupId>org.springframework.boot</groupId>
+					              <artifactId>spring-boot-starter-validation</artifactId>
+					          </dependency>
+					  ```
+				- （2）controller方法参数前面加注解@Valid
+					- 后面实体类参数前面加的注解才会生效
+				- （3）vo类参数前面加注解
+					- ```
+					  @NotNull
+					  @Length(min=32)
+					  ```
+				- （4）创建自定义校验组件isMobile【@interface】
+				  background-color:: #787f97
+					- ```
+					  @Constraint(
+					          validatedBy = {isMobileValidator.**class**}
+					  )*//**准备一个校验的类**--**校验规则**--**自定义*
+					  ```
+				- （5）创建自定义校验规则类isMobileValidator（实现ConstraintValidator接口）
+					- 重写initalize方法和isValid方法（校验逻辑）
+					- 声明required变量来表示校验的这个变量必填还是非必填
+				- （6）测试：
+					- serviceimpl类中的参数校验部分删掉（在实体类中参数被校验了）
+					- 【】：抛出异常但是没有被捕获
+			- #### 5-异常处理
+				- 步骤
+					- （1）全局异常类【继承于RuntimeException】
+					- （2）全局异常处理类【异常强转】
+					- （3）修改serviceimpl类，return异常可以换成throw new GlobalException(RespBeanEnum.LOGIN.ERROR)
+				- springboot全局异常处理方式注解：
+					- controlleradvice：只能处理控制器异常
+					- errorcontroller--restcontrolleradvice
+				- 异常处理方法注解：
+					- @exceptionhandler
+				-
 		-
 	- 编程题
 	  collapsed:: true
@@ -2417,14 +2562,18 @@
 		  collapsed:: true
 			- ```
 			  各位老师好，我是来自北京邮电大学通信工程专业的硕士研究生吕佳奇，
-			  非常荣幸获得贵公司的面试机会，我面试的岗位是Java后端开发实习生。
-			  我本硕的专业都是通信工程，在本科和研究生阶段获得过多次一等奖学金。目前担任党支部书记。
+			  非常荣幸获得贵公司的面试机会，
+			  我本硕的专业都是通信工程，
 			  对软件开发怀有浓烈的兴趣，学习过计算机网络和数据结构等基础知识
+			  在2022年有一段暑期实习，亚投行
 			  有良好的java基础、能使用SSM框架、MySQL数据库、熟悉React等流行的前端技术
-			  有前端可视化框架的使用经验
-			  我的上一个java项目是外卖管理平台，
-			  在实验室的项目中我负责水下无线光通信演示系统的软件仿真的主要部分，技术栈主要是JavaScript、Jquery、React，
-			  也包括可视化框架three.js和地理信息可视化系统Cesium的使用。在研一被老师分派组里的软件开发和仿真算法部分的任务后，
+			  在实验室参加过一些重点项目。有前端可视化框架的使用经验，在实验室的项目中我负责水下无线光通信演示系统的软件仿真的主要部分，技术栈主要是JavaScript、Jquery、React，
+			  也包括可视化框架three.js和地理信息可视化系统Cesium的使用。
+			  java项目是外卖管理平台，
+			  在本科和研究生阶段获得过多次一等奖学金。目前担任党支部书记。
+			  
+			  
+			  在研一被老师分派组里的软件开发和仿真算法部分的任务后，
 			  在研一一年我作为实验室里唯一的负责软件平台的同学，一直保持着自学的习惯，摸索着用哪种技术实现老师分配的任务，实现理想的效果，有
 			  在研二开始帮助师妹快速上手项目、分享我在学习一系列技术的路上踩过的坑，
 			  我一直认为自己是一个抗压能力和自律性比较强的人，周围的同学也评价我是一个技术上能够愿意和别人交流，共同学习进步的人。
@@ -2432,14 +2581,17 @@
 			  ```
 		- HR面
 		- 宁波银行科技岗
+		  collapsed:: true
 			- 准备
 				- 自我介绍
 					-
 				- 自身在银行有什么优势、你的优势在哪里
+				  collapsed:: true
 					- （1）专业知识方面，我是通信工程专业，有相关的专业技能和理论基础，有java和js等语言的软件开发经验，具备解决实际问题的能力
 					- （2）团队合作方面，我善于和别人合作，作为班级党支部书记，有比较强的团队协作和沟通能力。
 					- （3）个人经历方面，我曾经在亚投行的IT基础设施部门实习过，对银行的IT基础设施模式和风险管理和合规管理方面有一定的认识。能够在实际项目中注重客户需求，从客户角度出发进行分析，体现为客户为中心的服务理念。
 				- 对于银行要做的开发工作有什么了解
+				  collapsed:: true
 					- 银行要做的开发工作主要有以下方面
 					- （1）后台系统开发：后台管理，账户管理，资金结算和清算，风险管理
 					- （2）前端开发：网上银行，还有一些自助服务的终端
@@ -2472,12 +2624,15 @@
 					- （4）坚持执行
 					- （5）寻求帮助
 				- 重载和重写的区别
+				  collapsed:: true
 					- 重载：函数根据不同的输入采取不同的响应
 					- 重写：子类继承父类的方法，对方法进行修改来代替原有的实现
 					- 重写和重载都是实现多态的方式，重写是基于继承，在继承关系中实现运行时多态；重载是在一个类内部实现的，函数名相同但是参数列表不同，实现编译时多态
 				- $和# 的区别
+				  collapsed:: true
 					- 在数据库中：’test$‘ 查询以test为结尾的字符串（用户名称），#temp_table 创建一个名字为temp_table的临时表
 				- sql注入的形式，sql注入及预防
+				  collapsed:: true
 					- 是一种网络攻击的方式
 					- （1）盲注SQL注入
 					- （2）键盘记录SQL注入
@@ -2552,6 +2707,41 @@
 				- 为什么采用缓存技术可以优化数据库的读操作？
 				  collapsed:: true
 					- 减少对数据库的频繁访问，进一步提高系统的性能
+				- #### _____
+				- 无领导小组提问
+				- 自己的优缺点
+					- 优点：
+						- 组织和协调能力比较好，在本科和研究生阶段参与过很多学生工作，在这些活动中锻炼了我的组织协调和策划能力
+						- 做事有计划性并且准时
+						- 心态比较好，当我遇到一件事，我会预想一个最坏的结果，然后用百分百的努力去完成。
+					- 缺点：
+						- 工作中不太会拒绝别人
+						- 英语口语不是很好，虽然口语不太好，但是看和写英文邮件没有太大问题，这也是我后面需要安排计划提高的点。
+				- 学习方式
+					- 首先是时间管理，理解性知识和记忆性知识交替学习
+					- 做笔记和定期复盘，有一部分是手写笔记
+					- 定期检查自己
+				- 实习经历获得的成长
+					- 在专业技术方面：在学校学习到的知识能够结合实践，对网络、计算和存储的关系有了更深入的了解。对云管理平台有一定的了解，并且掌握了一些新的自动化运维的方式
+					- 个人素质方面：实习有助于我了解自己的优势和职业发展方向。提高了我的解决问题和自主学习的能力。
+				- 为什么想来XX的金融科技岗
+					- 金融科技岗的理解：将先进的技术应用在金融领域以提供更好的金融服务。这包括但不限于人工智能、大数据分析、区块链。。。实现安全保障、金融技术服务
+					-
+					-
+				- 和父母的相处模式
+				- 情绪失控的例子
+				- 自我介绍
+					- 各位老师好，我是吕佳奇，来自北京邮电大学，目前是电子信息专硕在读研二。我的意向实习方向是金融科技实习生。
+					  我曾有过一段实习经历，是2022年6月到9月在亚洲基础设施投资银行的IT基础设施部门实习生。
+					  在研究生和本科阶段多次获得一等奖学金，获得过三好学生等和浙江省物理创新竞赛省二等奖。目前担任党支部书记。
+					  我在实验室中的研究方向是水下无线光通信，并且在组里负责主要的软件开发和场景仿真任务。
+				- 软件开发过程中最有成就感的一件事
+				- 特长：
+					- 我的特长是在本科和研究生阶段参与过很多学生工作，在这些活动中锻炼了我的组织协调和策划能力，
+					  因为活动中也要不断学习新的东西，所以在这个过程中我的学习能力也得到了提升。
+					-
+			-
+		-
 	- Java-八股
 	  collapsed:: true
 		- Java 基础
@@ -4681,7 +4871,7 @@
 			  collapsed:: true
 				- ```
 				  ```
-			- # 介绍
+			- ## 介绍
 			  collapsed:: true
 				- 定义：IOC反转控制和AOP面向切面编程
 				- 程序开发步骤
@@ -4718,10 +4908,180 @@
 				  collapsed:: true
 					- ![image.png](../assets/image_1682272517567_0.png)
 					-
-			- # 配置文件
+			- ## 配置文件
+			  collapsed:: true
 				-
+			- ## 设计模式
+				- （1）分类
+					- ![image.png](../assets/image_1686710629857_0.png)
+				- （2）案例
+					- 包装器设计模式：实现不同数据源的切换
+					  collapsed:: true
+						- 接口`DataSource`：
+						  collapsed:: true
+						  :LOGBOOK:
+						  CLOCK: [2023-06-14 Wed 10:46:42]--[2023-06-14 Wed 10:46:43] =>  00:00:01
+						  :END:
+						  属性：url，name，password。方法`getConnection()`，`closeConnection(Connection connection)`
+							- ![image.png](../assets/image_1686710701796_0.png)
+						- 该接口实现的具体类`MySQLdatasource`
+						  collapsed:: true
+						  构造器、重写`Datasource`的两个方法
+							- ![image.png](../assets/image_1686710742674_0.png)
+							- ![image.png](../assets/image_1686710752007_0.png)
+							-
+							-
+						- 该接口实现的具体类`Oracledatasource`
+						  collapsed:: true
+						  构造器、重写`Datasource`的两个方法
+							- ![image.png](../assets/image_1686710893947_0.png)
+							- ![image.png](../assets/image_1686710905675_0.png)
+							-
+							-
+						- 定义包装类`DataSourceWrapper`
+						  collapsed:: true
+						  属性：dataSource，`setdataSource`方法，构造器、重写`Datasource`的两个方法
+							- ![image.png](../assets/image_1686710995964_0.png)
+						- 主函数
+						  collapsed:: true
+							- ![image.png](../assets/image_1686711132606_0.png)
+							-
+					- 模板方法模式：对数据库操作（抽象类）
+					  collapsed:: true
+						- 定义一个抽象类  `AbstractJdbcTemplate` ，它包含了执行数据库操作的基本流程，具体实现留给其子类去完成。
+						- 定义一个具体的子类  `JdbcUserTemplate` ，它继承自  `AbstractJdbcTemplate` ，并实现其中的抽象方法  `setParameters` 。
+						- 最后，我们可以使用  `JdbcUserTemplate`  类来查询、添加用户
+					-
 		- Java Spring Boot
+		  collapsed:: true
+			- ### 读取配置文件
+			  collapsed:: true
+				- #### @value（常用）
+					- （1）配置文件：格式可以是xml或者properties或者yaml格式，这个文件是自定义的，位置放在项目下的某个路径
+						- ```
+						  <bean id="myBean" class="com.example.MyBean">
+						     <property name="name" value="${mybean.name}" />
+						     <property name="age" value="${mybean.age}" />
+						  </bean>
+						  ```
+					- （2）在bean中使用@value注解注入属性（注入该类的对应成员变量中）
+						- ```
+						  public class MyBean {
+						     @Value("${mybean.name}")
+						     private String name;
+						     
+						     @Value("${mybean.age}")
+						     private int age;
+						     
+						     // getter/setter
+						  }
+						  ```
+					- （3）开启SpEL表达式的支持（YAML格式不用）
+						- 对于XML格式：在Spring配置文件中
+							- ```
+							  <context:annotation-config />
+							  ```
+						- 对于properties格式：在主类上使用如下的注解
+							- @EnableConfigurationProperties
+							- @SpringBootApplication
+				- #### @Configurationproperties（常用）
+					- （1）配置文件中定义属性
+						- ```
+						  myapp.name=My Application
+						  myapp.version=1.0
+						  ```
+					- （2）在javaBean中使用注解注入属性前缀（@ConfigurationProperties(prefix = "myapp")）
+						- ```
+						  @ConfigurationProperties(prefix = "myapp")
+						  public class MyAppProperties {
+						     private String name;
+						     private String version;
+						     
+						     // getter/setter
+						  }
+						  ```
+					- （3）在配置类中声明创建这个JavaBean（@ConfigurationProperties(prefix = "myapp")）
+						- ```
+						  @Configuration
+						  public class MyConfig {
+						     @Bean
+						     @ConfigurationProperties(prefix = "myapp")
+						     public MyAppProperties myAppProperties() {
+						        return new MyAppProperties();
+						     }
+						  }
+						  ```
+					- （4）在应用程序中可以通过注入这个javabean使用属性
+						- 这个javabean就是MyAppProperties，这些属性是他的成员变量
+						- ```
+						  @Service
+						  public class MyService {
+						     private MyAppProperties myAppProperties;
+						     
+						     public MyService(MyAppProperties myAppProperties) {
+						        this.myAppProperties = myAppProperties;
+						     }
+						     
+						     public void printInfo() {
+						        System.out.println(myAppProperties.getName() + " " + myAppProperties.getVersion());
+						     }
+						  }
+						  ```
+				- #### @PropertySource（只能用properties文件）
+					- （1）配置文件myapp.properties
+						- ```
+						  myapp.name=My Application
+						  myapp.version=1.0
+						  ```
+					- （2）创建Spring配置类，并在其中使用  `@PropertySource`  注解指定需要加载的属性文件
+						- ```
+						  @Configuration
+						  @PropertySource("classpath:myapp.properties")
+						  public class MyConfig {
+						     // ...
+						  }
+						  ```
+					- （3）使用@value注解将属性值注入到需要使用的Bean
+						- 如果属性文件不存在或者属性名不存在，程序可能会抛出异常，因此在使用  `@Value`  注解时需要考虑异常处理。
+						- ```
+						  @Service
+						  public class MyService {
+						     @Value("${myapp.name}")
+						     private String appName;
+						     
+						     @Value("${myapp.version}")
+						     private String appVersion;
+						     
+						     // getters
+						  }
+						  ```
+					-
+			-
 		- Java MyBatis
+		- Java并发
+			- threadlocal
+			  collapsed:: true
+				- ```
+				  public void set(T value) {
+				      //获取当前请求的线程
+				      Thread t = Thread.currentThread();
+				      //取出 Thread 类内部的 threadLocals 变量(哈希表结构) ----- threadlocal在thread源码中实际上是ThreadMap
+				      //是threadloacl定制的hashmap
+				      //执行getmap函数的是当前的线程
+				      ThreadLocalMap map = getMap(t);
+				      if (map != null)
+				          // 将需要存储的值放入到这个哈希表中
+				          map.set(this, value);
+				      else
+				          createMap(t, value);
+				  }
+				  ThreadLocalMap getMap(Thread t) {
+				      return t.threadLocals;
+				  }
+				  
+				  ```
+				-
+		-
 		- JVM
 		  collapsed:: true
 			- 学习路线
@@ -4932,6 +5292,7 @@
 				- ## 垃圾回收
 		- Java 设计模式
 		- JUC
+		  collapsed:: true
 			- ## 介绍
 				- IO操作和cpu占用的关系
 					- IO操作不占用cpu，因为一般拷贝文件使用的是【阻塞IO】，所以相当于线程没有使用cpu，但是需要一直等待直到IO结束，cpu没有充分利用线程，所以才有后面的【非阻塞IO】【异步IO】
@@ -4949,6 +5310,7 @@
 				  ```
 			- ## MySQL
 			  collapsed:: true
+				- `mysql -uroot -p123456`
 				- ## 基础
 				  collapsed:: true
 					- ### 数据模型
@@ -5227,6 +5589,7 @@
 						- #### 总结
 						  collapsed:: true
 							- ![image.png](../assets/image_1683622926414_0.png)
+					-
 				- ## 进阶
 				  collapsed:: true
 					- ### 存储引擎
@@ -5280,9 +5643,6 @@
 						- #### 小结
 						  collapsed:: true
 							- ![image.png](../assets/image_1684161199704_0.png)
-					- #### linux下安装-linux7
-					  collapsed:: true
-						- ![image.png](../assets/image_1684161295128_0.png)
 					- ### 索引
 					  collapsed:: true
 						- #### 概述
@@ -5398,6 +5758,7 @@
 										- ![image.png](../assets/image_1684234781718_0.png)
 										- 跟命令中的顺序无关
 								- 范围查询（联合查询）
+								  collapsed:: true
 									- ![image.png](../assets/image_1684234935137_0.png)
 							- 【2】索引使用
 							  collapsed:: true
@@ -5742,8 +6103,723 @@
 				  collapsed:: true
 					- ### order by
 						- ![image.png](../assets/image_1685004454999_0.png)
+				- ### 复习
+					- 主键索引、唯一索引和常规索引是只针对innodb引擎来说的吗，还是所有b+树结构的存储引擎来说的？
+					  collapsed:: true
+						- ```
+						  主键索引、唯一索引和常规索引是针对大多数使用B+树结构的存储引擎来说的，
+						  而不仅仅是InnoDB引擎。
+						  这些索引的概念和功能是在关系型数据库中普遍存在的。
+						  ```
+					- 聚集索引和二级索引索引是只针对innodb引擎来说的吗，还是所有b+树结构的存储引擎来说的？
+					  collapsed:: true
+						- ```
+						  聚集索引和二级索引的概念在关系型数据库中普遍适用，
+						  但实现方式和特性可能因存储引擎而异。
+						  聚集索引是一种特殊类型的索引，它决定了表中数据的物理存储顺序。
+						  在InnoDB存储引擎中，每个表只能有一个聚集索引，通常是主键索引。
+						  聚集索引的叶子节点包含了整条数据记录，因此可以满足覆盖查询的需要。
+						  ```
+					- 前缀索引创建【2种】
+						- ```
+						  ALTER TABLE XXX ADD INDEX XX_index(XX(10)) 
+						  和 CREATE INDEX XX_index(XX(10)) ON XXX 
+						  这两种方式都可以用来创建前缀索引
+						  ```
 			- ## Redis
-				-
+			  collapsed:: true
+				- `E:\我的文件_E\开发准备\14-redis\shangguigu\笔记\笔记\`
+				- ### 第一章：介绍Nosql
+				  collapsed:: true
+					- #### 1-应用：
+						- 客户端 --> web服务器（CPU及内存压力） --> 数据库（IO压力）
+						- **（1）解决cpu及内存压力【分布式架构】**
+							- 登录之后产生session对象存储用户信息，在分布式服务器架构中的session共享问题：
+							- 1- 存储到客户端cookie，缺点安全性问题
+							- 2- session复制，缺点空间浪费
+							- 3- nosql数据库，用户信息存储，不需要io操作直接放在内存中，速度快，数据结构简单
+						- **（2）IO压力**
+							- 数据库压力解决方法：
+								- 水平切分：按照行拆分数据库分散存储到不同的物理位置上
+								- 垂直切分：按照列拆分数据库分散存储到不同的物理位置上
+								- 读写分离：读操作和写操作用不同的数据库处理。【主从复制、读操作负载均衡、异步同步、数据一致性】
+								- 缓存数据库：减少io的读操作
+							- 但是上述方法1 2 3有一定缺点，是破坏了一定的业务逻辑来换取性能
+					- #### 2-Nosql：非关系型数据
+						- 特点：
+							- 键值对
+							- 不遵循SQL标准
+							- 不支持ACID【不等于不支持事务】
+								- ```
+								  ACID是数据库事务的四个特性，原子性，一致性，隔离性，持久性
+								  ACID是确保数据库在执行并发操作和数据恢复的时候
+								  保持数据完整性和事务可靠性的重要概念
+								  
+								  隔离性：
+								  有四个隔离级别：读已提交，读未提交，可重复读，串行化
+								  有三个并发问题：脏读，不可重复读，幻读
+								  ```
+							- **远超SQL性能**
+						- 场景：
+							- 数据高并发的读写
+							- 海量数据的读写
+						- 不适用场景：
+							- 需要事务支持
+							- 基于sql的结构化查询存储
+						- 种类：
+							- **Memcache：早期，支持数据类型单一，不支持持久化（只能在内存中存储），多线程+锁**
+							- **Redis：【支持持久化、支持多种数据结构（list、set、hash、zset）、单线程+多路IO复用】**
+							- MongoDB：文档型数据库，对value的查询方式丰富，支持大型对象
+					- #### 3-大数据
+						- 行式数据库
+							- 将每一行都存储成一部分
+							- ![image.png](../assets/image_1688005162290_0.png)
+						- 列式数据库
+							- 将每一列存储成一部分
+							- ![image.png](../assets/image_1688005189136_0.png)
+						- 种类：
+							- Hbase：大数据
+							- Cassandra：海量数据
+							- Neo4j：图关系数据库
+				- ### 第二章：Redis概述
+				  collapsed:: true
+					- #### 1-特点
+						- 原子性操作
+						- 支持不同类型的排序
+						- 周期性写入内存（持久化），在此基础上主从同步
+					- #### 2-安装
+						- `E:/我的文件_E/开发准备/13-商城项目/谷粒商城/课件和文档/基础篇/课件/01、分布式基础&项目环境搭建.pdf`
+						- 设置后台启动
+						- ```
+						   docker exec -it redis bash
+						   docker exec -it redis redis-cli
+						  ```
+					- #### 3-介绍
+						- 为什么是接口6379
+						- 16个默认数据库，用的是0号库，密码都相同
+							- ![image.png](../assets/image_1688008010108_0.png)
+						- Redis是单线程+多路IO复用技术
+							- ![image.png](../assets/image_1688008381159_0.png)
+							- （1）单线程：redis一次只能处理一个请求，不能同时处理多个请求
+							- 这样的优点：
+								- 没有线程切换开销
+								- 避免竞争条件：简化并发处理
+								- 原子操作保证：每个操作都是原子的，不担心资源争夺问题
+							- （2）多路IO复用
+								- 高并发
+						- Redis和Memcache的三个区别
+				- ### 第三章：Redis的数据类型（5个）
+				  collapsed:: true
+					- key相关操作
+						- 查看所有 keys *
+						- 判断是否存在 exists
+						- 查看类型 type
+						- 删除 del
+						- 非阻塞删除（异步删除）unlink key
+						- 设置过期时间 expire
+						- 查看还有多久过期：ttl   -1永不过期 -2已过期
+						- 查看当前库的key数量 dbsize
+						- 切换数据库 select
+						- 清空当前库 flushdb
+						- 通杀所有库 flushall
+					- **字符串String**
+						- 特点：二进制安全的，value的String最大521M
+						- 操作：
+							- set key-value
+							- get
+							- append key-value
+							- strlen
+							- setnx key-value (key不存在才成功否则返回0)
+							- incr
+							- decr
+							- incrby/decrby
+							- mset
+							- mget
+							- msetnx
+							- getrange
+							- setrange(索引从0开始)
+							- setex 设置过期时间
+							- getex 以新换旧
+						- 原子性：不能被其他线程打断的操作
+						- 数据结构：**动态字符串**，类似于ArrayList
+							- **补充**：
+								- ArrayList底层是Object数组
+								- LinkedList底层是双向链表
+							- 实际分配空间是capacity，字符串长度是len，capacity>len
+							- len<1M，扩容加倍
+							- len>1M，扩容+1M
+							- len最大是512M
+					- **列表List**
+						- 逻辑结构：**双向链表**，字符串列表，有顺序，头部或者尾部
+						- 数据结构：
+							- 列表元素较少时：zipList，压缩列表，连续内存
+							- 列表元素较多时：quickList，快速链表
+							- 节省指针占用的空间，又实现快速插入删除
+						- 操作
+							- lpush/rpush
+							- lpop/rpop     【value清空之后key就消失】
+							- rpoplpush 右边吐出一个值，然后左插
+							- lrange 【-1表示右边第一个】【从左到右】
+							- lindex 按照下标索引获得元素
+							- llen 获得value的list长度
+							- linsert key before value new_value 后面插入
+							- lrem 删除n个value
+							- lset 替换
+					- **集合Set**
+						- 特点：无序，自动去重
+						- 逻辑结构：字典
+						- 数据结构：hash表【value=null】
+							- 增删查的复杂度都是O(1)，数据增多并不改变时间复杂度
+							- **补充**：HashSet数据结构也是HashMap【非线程安全】，hashtable【线程安全但效率低】
+						- 操作：`E:\我的文件_E\开发准备\14-redis\shangguigu\笔记\笔记\`
+							- sadd
+							- smembers
+							- sismember
+							- scard
+							- srem 删除
+							- spop
+							- srandmember
+							- smove
+							- sinter
+							- sunion
+							- sdiff
+					- **哈希Hash**
+						- 逻辑结构：value是一整个hash表，可以用来存有几个属性的对象
+						- 存储方式：
+							- ![image.png](../assets/image_1688038857435_0.png){:height 193, :width 544}
+						- 数据结构：
+							- ZipList：压缩列表，数据长度较短并且数量比较少
+							- HashTable：哈希表
+						- 操作：
+							- hset
+							- hget
+							- hexists
+							- hkeys
+							- hvals
+							- hincrby
+							- hsetnx
+					- **有序集合Zset**
+						- 逻辑结构：有序（自动排序），不重复的字符串集合。【评分：评分的依据，不同成员的评分可以相同】
+						- 数据结构：
+							- hash：关联value和score
+							- 跳跃表：有序链表，类似于二分查找？【快速查找】
+						- 操作：
+							- zadd
+								- ![image.png](../assets/image_1688040680679_0.png)
+							- zrange [withscores]
+							- zrangebyscore 【闭区间】
+								- ![image.png](../assets/image_1688040963111_0.png)
+							- zincrby
+							- zrem
+							- zcount
+							- zrank
+						-
+				- ### 第四章：配置文件
+				  collapsed:: true
+					- 单位
+						- 仅支持bytes，不支持bit
+					- 引入其他配置文件
+					- 网络
+						- tcp-backlog 连接队列
+						- timeout 空闲的客户端多久关闭
+					- 通用
+						- daemonsize 是否为后台进程
+						- loglevel 日志记录级别
+					- 安全
+					- 限制
+						- **maxmemory**，必须设置，否则内存满则服务器宕机
+						- **maxmemory-policy**，移除规则（6个）
+							-
+				- ### 第五章：发布和订阅
+				  collapsed:: true
+					- redis可以订阅任意个频道
+					- 发布的消息没有持久化，只能收到订阅后的消息
+				- ### 第六章 新数据类型
+				  collapsed:: true
+					- **Bitmaps**：活跃用户
+						- 实际上是进行位操作的字符串
+						- 缺点：偏移量很大的时候执行慢
+						- 操作
+						- Bitmaps和Set区别
+							- 节省空间，针对活跃用户量较多
+					- **HyperLogLog** ： 统计去重，计算基数
+						- 场景：独立访客IP数，搜索记录等
+						- 优点：即使计算基数数量很大，需要的空间总是固定的，并且很小
+						- 操作：
+							- 添加
+							- 统计数量
+							- 合并
+					- **Geospatial**：
+						- 场景：地理信息
+						- 操作：
+				- ### 第七章 Redis_Jedis_测试
+				  collapsed:: true
+					- `E:\我的文件_E\开发准备\14-redis\shangguigu\Myproject\Prac`
+					- 步骤
+						- （1）pom.xml引入依赖
+						- （2）JedisDemo.class测试连通redis
+						- （3）具体操作
+				- ### 第八章 实例：手机验证码
+				  collapsed:: true
+					- `E:\我的文件_E\开发准备\14-redis\shangguigu\Myproject\Prac`
+					- ```
+					  （1）Random工具类的nextInt方法
+					  （2）限制最多三次的逻辑0，1 2，3，>3
+					  （3）return结束代码
+					  ```
+				- ### 第九章 Redis和SpringBoot整合
+				  collapsed:: true
+					- `E:\我的文件_E\开发准备\14-redis\shangguigu\Myproject\Prac2_redis_springboot`
+					- #### 步骤
+					  collapsed:: true
+						- （1）pom.xml依赖引入【两个依赖】
+							- springboot-starter-data-redis
+							- commen-pool连接池
+							- ```
+							  这两个配置版本号去掉：冲突
+							  ```
+						- （2）配置文件.properties
+						- （3）redis配置类
+						- （4）redisController类
+						- ![image.png](../assets/image_1688102268413_0.png)
+						-
+				- ### 第十章 事务、锁机制、秒杀
+				  collapsed:: true
+					- Redis事务特点
+					- multi、exec、discard
+					- 事务的错误处理
+					- 锁机制：
+						- 乐观锁：redis
+						- 悲观锁：mysql
+					- watch key
+					- **事务三特性**
+						- 单独的隔离操作
+						- 没有隔离界别
+						- 不保证原子性
+				- ### 第十一章 事务--秒杀案例
+				  collapsed:: true
+					- #### 1-进行基础逻辑的事务操作
+					  collapsed:: true
+						- 步骤：【在SecKill_redis.class中】（有代码）
+						  collapsed:: true
+							- ```
+							  package com.atguigu;
+							  
+							  import redis.clients.jedis.Jedis;
+							  import redis.clients.jedis.JedisPool;
+							  
+							  import java.io.IOException;
+							  
+							  public class SecKill_redis {
+							      public static void main(String[] args) {
+							          Jedis jedis = new Jedis("192.168.33.10",6379);
+							          System.out.println(jedis.ping());
+							          jedis.close();
+							      }
+							  
+							      //秒杀,用户id和商品id
+							      public static boolean doSecKill(String uid,String proid) throws IOException{
+							          System.out.println(uid+" "+proid);
+							          
+							          //1-uid和proid非空判断
+							          if(uid==null||proid==null){
+							              return false;
+							          }
+							  
+							          //2-连接redis
+							          Jedis jedis = new Jedis("192.168.33.10",6379);
+							  
+							          //3-拼接key
+							          //redis两部分数据：库存和用户id
+							          //库存
+							          String kcKey = "sk:"+proid+":qt";
+							          //用户
+							          String userKey = "sk:"+proid+":user";
+							  
+							          //4-获取库存，如果是空：开没开始；
+							          if(jedis.get(kcKey)==null){
+							              System.out.println("秒杀还未开始，等待ing");
+							              jedis.close();
+							              return false;
+							          }
+							  
+							          //5-判断用户是否是重复秒杀，每人只有一次
+							          //用户key是否存在，用户列表是一个set列表
+							          Boolean sismember = jedis.sismember(userKey, uid);
+							          if(sismember){
+							              System.out.println("已经秒杀过，不能重复秒杀");
+							              jedis.close();
+							              return false;
+							          }
+							  
+							          //6-如果商品数量<1，秒杀结束
+							          String kc = jedis.get(kcKey);
+							          if(Integer.parseInt(kc)<1){
+							              System.out.println("商品库存不足，秒杀结束");
+							              jedis.close();
+							              return false;
+							          }
+							  
+							  
+							          //7-秒杀过程
+							          //库存-1
+							          jedis.decr(kcKey);
+							          //秒杀成功用户加入清单
+							          jedis.sadd(userKey,uid);
+							          System.out.println("用户秒杀成功");
+							          jedis.close();
+							          return true;
+							      }
+							  
+							  
+							  }
+							  ```
+						- 配置：
+							- （1）pom.xml
+							- （2）Tomcat配置【IDEA种配置Tomcat】
+							  background-color:: #497d46
+								- ```
+								  https://www.bilibili.com/video/BV1YR4y1G7j2?spm_id_from=333.880.my_history.page.click
+								  ```
+						- 数据库结构：
+							- ```
+							  set sk:0101:qt  1000 //设置库存
+							  ```
+					- #### 2-秒杀并发模拟--测试
+					  collapsed:: true
+						- 安装httpf-tools
+							- ```
+							  docker pull httpd
+							  
+							  docker run -dit -p 2080:80 --name httpd -d httpd
+							  docker exec -it httpd bash
+							  
+							  docker cp httpd:/usr/local/apache2/conf/ /mydata/httpd/conf/
+							  
+							  docker stop httpd
+							  docker rm httpd
+							  
+							  docker run -p 2080:80 --name httpd \
+							  -v /mydata/httpd/htdocs:/usr/local/apache2/htdocs \
+							  -v /mydata/httpd/conf:/usr/local/apache2/conf \
+							  -v /mydata/httpd/logs:/usr/local/apache2/logs \
+							  -d httpd
+							  ```
+						- 测试：ab --help
+							- ```
+							  ab -n 1000 -c 100 -p /usr/local/apache2/htdocs/postfile -T application/x-www-form-urlencoded http://10.28.134.102:8080/SecKill2_war_exploded/doseckill
+							  
+							  ab -n 1000 -c 100 -p postfile -T application/x-www-form-urlencoded http://10.28.134.102:8080/SecKill2_war_exploded/doseckill
+							  
+							  -n 请求
+							  -c 并发
+							  -p postfile文件
+							  -T 类型，表单的enctype属性值
+							  uri localhost换成windows的ip
+							  ```
+						- 产生问题
+							- （1）连接超时
+								- 连接数过多不能同时处理，进行等待
+							- （2）并发--超卖问题
+								- ![image.png](../assets/image_1688437054778_0.png)
+								-
+					- #### 3-连接超时--【连接池解决】【存在问题】
+					  background-color:: #497d46
+					  collapsed:: true
+						- （1）连接池工具类 JedisPoolUtil.class
+						  background-color:: #497d46
+						- （2）秒杀逻辑类改步骤2：通过连接池获得jedis
+							- ```
+							  JedisPool jedisPoolInstance = JedisPoolUtil.*getJedisPoolInstance*();
+							  Jedis jedis = jedisPoolInstance.getResource();
+							  ```
+					- #### 4-超卖问题--【乐观锁（版本号校验）】
+					  collapsed:: true
+						- 原因：多事务之间相互产生影响，redis事务使用的就是乐观锁
+						- 步骤：
+							- **监视库存**
+							- **秒杀过程：库存-1和添加用户id，将这个过程添加到事务种【multi，exec】**
+						- 测试：
+							- ```
+							  ab -n 100 -c 10 -p postfile -T application/x-www-form-urlencoded http://10.28.134.102:8080/SecKill2_war_exploded/doseckill
+							  ```
+						-
+					- #### 5-剩余库存问题--【原因：乐观锁】
+						- 原因：乐观锁造成库存遗留
+						- ```
+						  2000人同时购买，库存500，初始版本号是1.0
+						  用户1购买之后的版本号是1.1
+						  剩下1999个用户的版本号都是1.0
+						  版本号不一致不能购买
+						  ```
+						- 解决方案：
+							- （1）悲观锁？不可以，redis默认乐观锁，不能使用悲观锁
+							  background-color:: #978626
+								- redis是单线程系统，基于内存的键值存储数据库。redis是事件驱动来处理请求，每个请求是原子级别的。**由于redis是单线程的，如果使用悲观锁，在读写之前需要获取锁然后再操作。会导致性能问题**，获取锁涉及网络通信和排队等待开销。乐观锁不用获取锁，也不会阻塞其他请求，只有提交时才会检查冲突。
+								- **redis是基于内存的数据库**（mysql是基于磁盘的），数据存储在内存中没有磁盘IO的开销，读写快。因此采用乐观锁机制在大多数情况下也能保证数据一致性和并发操作正确性。
+									- ~磁盘读写延迟：有其他数据依赖于尚未持久化的数据就会出错
+									- ~读写内存通常是单线程，读写磁盘可以采用多线程，因此产生并发线程之间线程安全的问题
+								- 【总结】：redis不用悲观锁是为了保持高性能和并发能力，并且基于内存也能在大多数情况下保持数据一致性
+							- （2）Lua脚本（嵌入式脚本语言）
+								- 特点：有一定原子性，执行不会被其他操作打断解决超卖问题，也是利用其单线程特性，用任务队列的方式解决多任务并发问题
+								- 步骤：
+									- SecKill_redisByScript构造
+									- SecKillServlet修改
+							-
+								-
+				- ### 第十二章 持久化
+				  collapsed:: true
+					- 方式：
+						- RDB：【写时复制技术】子进程Fork写临时文件，然后替换上次持久化的文件（周期性）
+							- 优点：适合大数据备份
+							- 缺点：对数据精确性要求不高，最后一次数据备份可能丢失（记秒的时候可能服务器宕机）、
+							- 测试：备份恢复过程--redis启动之后自动利用临时文件dump.rdb恢复数据
+						- AOF：【默认不开启】【开启即优先】日志只记录写操作，追加方式
+							- 开启：配置文件
+							- **流程：**
+							  background-color:: #497d46
+							- **aof文件异常恢复**：docker
+							  background-color:: #497d46
+							- 配置：
+							- rewrite：64M
+							- rewrite过程
+							  background-color:: #497d46
+							- 优点
+							- 缺点
+						- 对比
+				- #### 第十三章 主从复制
+				  collapsed:: true
+					- 步骤：【一主两从】【docker创建】【重启就失效】
+						- 参考：`https://blog.csdn.net/qq_36850813/article/details/91350727`
+						- 创建三个容器
+							- ```
+							  docker run -p 6380:6379 --name redis_s1 -v /mydata/s1_redis/data:/data \
+							  -v /mydata/s1_redis/conf/:/etc/redis/ \
+							  -d redis redis-server /etc/redis/redis.conf
+							  
+							  docker run -p 6381:6379 --name redis_s2 -v /mydata/s2_redis/data:/data \
+							  -v /mydata/s2_redis/conf/:/etc/redis/ \
+							  -d redis redis-server /etc/redis/redis.conf
+							  
+							  docker run -p 6382:6379 --name redis_m -v /mydata/m_redis/data:/data \
+							  -v /mydata/m_redis/conf/:/etc/redis/ \
+							  -d redis redis-server /etc/redis/redis.conf
+							  ```
+						- 查看三个的ip
+							- ```
+							  docker inspect 容器id
+							  172.17.0.6 m
+							  172.17.0.5 s2
+							  172.17.0.4 s1
+							  ```
+						- docker配置
+							- ```
+							  进入从库的redis—cli
+							  输入：info replication
+							  输入：SLAVEOF 172.17.0.6 6379
+							  ```
+						- 检查配置
+							- ![image.png](../assets/image_1688456502330_0.png)
+					- 1-其中一台从服务器挂掉--恢复所有数据
+					- 2-主服务器挂掉--重启后仍然有主从关系
+					- **原理**
+						- （1）从服务器主动发起：从服务器启动，主服务器发送持久化的rdb文件
+						- （2）主服务器主动发起：写操作
+					- 3-薪火相传
+					- 4-反客为主：（主机挂掉，下面的slave升级成master）
+						- ```
+						  slaveof no one //手动操作
+						  ```
+						- **哨兵模式【自动操作--当主机宕机】**
+							- 配置
+								- `https://blog.csdn.net/Alvin199765/article/details/109007971`
+								- ```
+								  //  /mydata/m_redis/conf/sentinel.conf
+								  sentinel monitor redis_m 172.17.0.6 6379 1
+								  ```
+							- 启动
+							  collapsed:: true
+								- ```
+								   docker exec -it redis_m redis-sentinel /etc/redis/sentinel.conf
+								   或者
+								   docker exec -it redis_m bash
+								   redis-sentinel /etc/redis/sentinel.conf
+								  ```
+							- 缺点：复制延时
+							- **选举新master规则【redis.conf】**
+							  collapsed:: true
+								- slave-priority值越小优先级越高(replice-priority)
+								- 偏移量最大的（与主服务器数据差距最小）
+								- runid最小的：redis启动时随机生成40位的runid
+							- java代码实现哨兵模式
+								- `sentinelSet.add("172.7.0.6", 26379)`
+								- `jedisSentinelPool = new JedisSentinelPool("redis_m", sentiellSet, jedisPoolConfig)`
+				- ### 第十四章 集群
+				  collapsed:: true
+					- 问题：扩容和并发
+						- 主从模式、薪火相传等配置是通过代理主机来解决
+						- 【redis3新方法】：**无中心化集群**配置
+					- 代理主机：
+					  collapsed:: true
+						- ![image.png](../assets/image_1688467652508_0.png)
+					- 无中心化集群方式
+						- 任何服务器都可以作为入口，互相可以访问；每个节点存储总数居的1/N【水平扩容】
+						- 可用性：其中一个出故障仍然可用
+						- ![image.png](../assets/image_1688477507481_0.png)
+					- slots插槽（一个集群）
+						- 16384个hash slot，平均分
+						- `CRC16(key)%16384`公式计算key对应哪个slot，加入数据
+						- ![image.png](../assets/image_1688533484003_0.png)
+					- #### 1-搭建集群
+					  collapsed:: true
+						- `https://www.cnblogs.com/niceyoo/p/14118146.html`
+						- 拉取镜像
+							- ```
+							  docker pull redis:5.0.5
+							  ```
+						- 创建redis容器然后启动，进入其中一个bash
+							- ```
+							  docker create --name redis-node1 --net host -v /mydata/cluster_redis/n1_redis/conf/:/etc/redis/ -v /mydata/cluster_redis/n1_redis/data:/data redis:5.0.5 --port 6380 --cluster-enabled yes --cluster-config-file nodes-node-1.conf
+							  docker create --name redis-node2 --net host -v /mydata/cluster_redis/n2_redis/conf/:/etc/redis/ -v /mydata/cluster_redis/n2_redis/data:/data redis:5.0.5 --port 6381 --cluster-enabled yes --cluster-config-file nodes-node-2.conf
+							  docker create --name redis-node3 --net host -v /mydata/cluster_redis/n3_redis/conf/:/etc/redis/ -v /mydata/cluster_redis/n3_redis/data:/data redis:5.0.5 --port 6382 --cluster-enabled yes --cluster-config-file nodes-node-3.conf
+							  docker create --name redis-node4 --net host -v /mydata/cluster_redis/n4_redis/conf/:/etc/redis/ -v /mydata/cluster_redis/n4_redis/data:/data redis:5.0.5 --port 6383 --cluster-enabled yes --cluster-config-file nodes-node-4.conf
+							  docker create --name redis-node5 --net host -v /mydata/cluster_redis/n5_redis/conf/:/etc/redis/ -v /mydata/cluster_redis/n5_redis/data:/data redis:5.0.5 --port 6384 --cluster-enabled yes --cluster-config-file nodes-node-5.conf
+							  docker create --name redis-node6 --net host -v /mydata/cluster_redis/n6_redis/conf/:/etc/redis/ -v /mydata/cluster_redis/n6_redis/data:/data redis:5.0.5 --port 6385 --cluster-enabled yes --cluster-config-file nodes-node-6.conf
+							  docker exec -it redis-node1 bash
+							  ```
+							- ![image.png](../assets/image_1688481151386_0.png)
+						- 执行组件集群命令（在bash下）
+							- ```
+							  redis-cli --cluster create 192.168.33.10:6380 192.168.33.10:6381 192.168.33.10:6382 192.168.33.10:6383 192.168.33.10:6384 192.168.33.10:6385 --cluster-replicas 1
+							  ```
+						- 测试：集群连接无中心化（在bash下）
+							- `redis-cli -c -p 6380【port--对应的！！！！（非常重要）】` //连接
+							- `CONFIG SET protected-mode no`
+							- `cluster nodes`  //信息
+					- #### 2-分配原则
+						- ip不同（主从、主和主）
+					- #### 3-操作
+					  collapsed:: true
+						- （1）加值
+						- ![image.png](../assets/image_1688533974284_0.png)
+						- （2）加入多个值，计算slot的key是user
+						- ![image.png](../assets/image_1688534373158_0.png)
+						- （3）查询值
+						- （4）故障恢复
+							- 主机恢复变成从机
+							- 主机和从机都宕机
+								- cluster-require-full-coverage=yes：整个集群都挂掉
+								- cluster-require-full-coverage=no：只有这个插槽不能用
+					- #### 4-集群的Jedis开发
+						- ```
+						  //创建一个对象--连接集群
+						  //相当于redis-cli -c -p 6379
+						  HostAndPort hostAndPort = new HostAndPort("192.168.33.10", 6379);
+						  JedisCluster jedisCluster = new JedisCluster(hostAndPort);
+						  
+						  //进行操作
+						  jedisCluster.set("key1","value1");
+						  String value = jedisCluster.get("key1");
+						  
+						  //关闭
+						  jedisCluster.close();
+						  ```
+					- 优点：
+						- 扩容、无中心化、分担压力
+					- 缺点：
+						- 多键操作不支持，多键操作的事务不支持，lua脚本不支持，出现较晚
+				- ### 第十五章 缓存
+				  collapsed:: true
+					- 访问请求先查缓存再查数据库
+					- #### 缓存穿透【访问压力突然增加】
+						- 原因：key在缓存中不存在，因此服务器大量访问数据库查询
+						- 现象：1-查询不到数据；2-出现很多非正常的url访问（恶意攻击）
+						- **解决方案**
+							- 1-对空值进行缓存
+							- 2-设置白名单（bitmaps位操作的偏移量）
+							- 3-Bloom过滤器（底层也是bitmaps）
+							- 4-实时监控，当命中率急剧降低，设置黑名单
+					- #### 缓存击穿
+						- 现象：1-redis正常运行；2-数据库访问压力激增；3-redis没有出现大量key过期
+						- 原因：redis中某个key过期，此时这个key大量查询
+						- 解决：
+							- 1-预先设置热门数据
+							- 2-实时调整key的过期时间
+							- 3-锁：
+								- 返回结果=空，设置锁，直到成功再释放锁
+					- #### 缓存雪崩
+						- 现象：1-数据库压力变大，服务器崩溃
+						- 原因：缓存极短时间内大量key过期
+						- 解决方案：
+							- 1-构建多级缓存架构
+							- 2-使用锁或者队列（高并发不支持）【锁或者队列可以保证不会有大量的线程同时访问数据库请求】
+							- 3-设置过期标志更新缓存
+							- 4-缓存失效时间分散开
+				- ### 第十六章 分布式锁：解决并发访问和数据一致性问题
+				  collapsed:: true
+					- 分布式锁：设置的锁对集群中所有机器都有效
+					- #### 1-实现方式：介绍的是redis分布式锁
+						- 设置锁：
+							- setnx（key不存在的时候才能操作），释放锁：del删除key
+						- 设置key的过期时间（锁随之过期）：
+							- `expire key 10`
+							- `setex key value EX 10`
+							- `setex key 10 value`
+						- 上锁之后突然出现异常【无法设置过期时间】--上锁同时就设置过期时间
+							- `set key value nx ex 10`
+						- Java代码+压测
+							- ```
+							  @GetMapping("testLock")
+							  public void testLock(){
+							      //1获取锁，setnx
+							      Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", "111");
+							  Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", "111"，3, TimeUnit.SECOND);//设置过期时间
+							      //2获取锁成功、查询num的值
+							      if(lock){
+							          Object value = redisTemplate.opsForValue().get("num");
+							          //2.1判断num为空return
+							          if(StringUtils.isEmpty(value)){
+							              return;
+							          }
+							          //2.2有值就转成成int
+							          int num = Integer.parseInt(value+"");
+							          //2.3把redis的num加1
+							          redisTemplate.opsForValue().set("num", ++num);
+							          //2.4释放锁，del
+							          redisTemplate.delete("lock");
+							  
+							      }else{
+							          //3获取锁失败、每隔0.1秒再获取
+							          try {
+							              Thread.sleep(100);
+							              testLock();
+							          } catch (InterruptedException e) {
+							              e.printStackTrace();
+							          }
+							      }
+							  }
+							  ```
+					- #### 2-防止误删--uuid防止A卡住再恢复将此时操作的B的锁释放
+						- 原因：
+							- ![image.png](../assets/image_1688564002110_0.png)
+						- **解决方案**：
+							- **释放**锁的时候，核对当前uuid和锁的uuid
+							- `UUID.randomUUID().toString()`
+							- ![image.png](../assets/image_1688564440036_0.png)
+					- #### 3-保证原子性
+						- 原因：没有原子性操作造成（不同进程之间相互影响）【释放锁单一操作中间也可以打断】
+						- 解决方案：lua脚本
+							- ![image.png](../assets/image_1688564144770_0.png)
+							- a的锁自动释放了，释放锁的操作对b进行
+					- 保证锁实现的四个条件：
+						- （1）互斥性（一段时间只有一个客户端能持有锁）
+						- （2）不会发生死锁（没有解锁就不能加锁）
+						- （3）加锁和解锁是同一个人
+						- （4）加锁和解锁有原子性
+				- ### 第十七章 新功能
+					- ACL：访问控制列表--用户权限控制和列表
+					- IO多线程：专门处理网络数据的读写和协议解析--redis仍然是单线程操作
+			-
 		- # 八股
 		  collapsed:: true
 			- 视频链接：
@@ -5912,6 +6988,342 @@
 				- ### 集群
 	- 微服务
 	- 中间件
+	  collapsed:: true
+		- ## Nginx
+		  collapsed:: true
+			- 定义：高性能的HTTP和反向代理服务器
+			- 正向和反向代理
+			  collapsed:: true
+				- （1）正向代理：在客户端需要配置代理服务器，通过代理服务器进行互联网访问（请求转发）
+					- ![image.png](../assets/image_1687748922452_0.png){:height 336, :width 740}
+					- （2）反向代理：客户端不需要配置，代理和真正访问的服务器对外是一个服务器，暴露的是代理服务器
+						- ![image.png](../assets/image_1687749056621_0.png)
+					- 正向代理：客户端知道代理服务器的存在
+					- 反向代理：客户端不知道代理服务器的存在
+			- 负载均衡：解决并发量过大，将请求分发到多个服务器上（基于反向代理）
+				- ![image.png](../assets/image_1687749379172_0.png){:height 243, :width 660}
+			- 动静分离：加快网站的解析速度，降低单个服务器的压力
+			  collapsed:: true
+				- ![image.png](../assets/image_1687749527061_0.png){:height 232, :width 564}
+				-
+				-
+			- 安装：---浏览器收藏夹
+				- 文件挂载关系：
+					- ```
+					  docker run -p 80:80 --name nginx \
+					  -v /mydata/nginx/html:/usr/share/nginx/html \
+					  -v /mydata/nginx/logs:/var/log/nginx \
+					  -v /mydata/nginx/conf:/etc/nginx \
+					  -d nginx:1.10
+					  ```
+			- 命令
+			  collapsed:: true
+				- （1）进入nginx的bash
+					- docker exec -it nginx bash
+				- （2）查看nginx版本（在nginx的bash下）
+					- nginx -v
+				- （3）检查配置文件并且显示配置文件（在nginx的bash下）
+				  collapsed:: true
+					- nginx -T
+					- 配置文件位置：
+						- `/etc/nginx/nginx.conf`
+							- ```
+							  user  nginx;
+							  worker_processes  1;
+							  
+							  error_log  /var/log/nginx/error.log warn;
+							  pid        /var/run/nginx.pid;
+							  
+							  
+							  events {
+							      worker_connections  1024;
+							  }
+							  
+							  
+							  http {
+							      include       /etc/nginx/mime.types;
+							      default_type  application/octet-stream;
+							  
+							      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+							                        '$status $body_bytes_sent "$http_referer" '
+							                        '"$http_user_agent" "$http_x_forwarded_for"';
+							      access_log  /var/log/nginx/access.log  main;
+							  
+							      sendfile        on;
+							      #tcp_nopush     on;
+							  
+							      keepalive_timeout  65;
+							  
+							      #gzip  on;
+							  
+							      include /etc/nginx/conf.d/*.conf;
+							  }
+							  ```
+						- ` /etc/nginx/mime.types`
+						  collapsed:: true
+							- ```
+							  types {
+							      text/html                             html htm shtml;
+							      text/css                              css;
+							      text/xml                              xml;
+							      image/gif                             gif;
+							      image/jpeg                            jpeg jpg;
+							      application/javascript                js;
+							      application/atom+xml                  atom;
+							      application/rss+xml                   rss;
+							  
+							      text/mathml                           mml;
+							      text/plain                            txt;
+							      text/vnd.sun.j2me.app-descriptor      jad;
+							      text/vnd.wap.wml                      wml;
+							      text/x-component                      htc;
+							  
+							      image/png                             png;
+							      image/tiff                            tif tiff;
+							      image/vnd.wap.wbmp                    wbmp;
+							      image/x-icon                          ico;
+							      image/x-jng                           jng;
+							      image/x-ms-bmp                        bmp;
+							      image/svg+xml                         svg svgz;
+							      image/webp                            webp;
+							  
+							      application/font-woff                 woff;
+							      application/java-archive              jar war ear;
+							      application/json                      json;
+							      application/mac-binhex40              hqx;
+							      application/msword                    doc;
+							      application/pdf                       pdf;
+							      application/postscript                ps eps ai;
+							      application/rtf                       rtf;
+							      application/vnd.apple.mpegurl         m3u8;
+							      application/vnd.ms-excel              xls;
+							      application/vnd.ms-fontobject         eot;
+							      application/vnd.ms-powerpoint         ppt;
+							      application/vnd.wap.wmlc              wmlc;
+							      application/vnd.google-earth.kml+xml  kml;
+							      application/vnd.google-earth.kmz      kmz;
+							      application/x-7z-compressed           7z;
+							      application/x-cocoa                   cco;
+							      application/x-java-archive-diff       jardiff;
+							      application/x-java-jnlp-file          jnlp;
+							      application/x-makeself                run;
+							      application/x-perl                    pl pm;
+							      application/x-pilot                   prc pdb;
+							      application/x-rar-compressed          rar;
+							      application/x-redhat-package-manager  rpm;
+							      application/x-sea                     sea;
+							      application/x-shockwave-flash         swf;
+							      application/x-stuffit                 sit;
+							      application/x-tcl                     tcl tk;
+							      application/x-x509-ca-cert            der pem crt;
+							      application/x-xpinstall               xpi;
+							      application/xhtml+xml                 xhtml;
+							      application/xspf+xml                  xspf;
+							      application/zip                       zip;
+							  
+							      application/octet-stream              bin exe dll;
+							      application/octet-stream              deb;
+							      application/octet-stream              dmg;
+							      application/octet-stream              iso img;
+							      application/octet-stream              msi msp msm;
+							  
+							      application/vnd.openxmlformats-officedocument.wordprocessingml.document    docx;
+							      application/vnd.openxmlformats-officedocument.spreadsheetml.sheet          xlsx;
+							      application/vnd.openxmlformats-officedocument.presentationml.presentation  pptx;
+							  
+							      audio/midi                            mid midi kar;
+							      audio/mpeg                            mp3;
+							      audio/ogg                             ogg;
+							      audio/x-m4a                           m4a;
+							      audio/x-realaudio                     ra;
+							  
+							      video/3gpp                            3gpp 3gp;
+							      video/mp2t                            ts;
+							      video/mp4                             mp4;
+							      video/mpeg                            mpeg mpg;
+							      video/quicktime                       mov;
+							      video/webm                            webm;
+							      video/x-flv                           flv;
+							      video/x-m4v                           m4v;
+							      video/x-mng                           mng;
+							      video/x-ms-asf                        asx asf;
+							      video/x-ms-wmv                        wmv;
+							      video/x-msvideo                       avi;
+							  }
+							  ```
+						- ` /etc/nginx/conf.d/default.conf`
+							- ```
+							  server {
+							      listen       80;
+							      server_name  localhost;
+							  
+							      #charset koi8-r;
+							      #access_log  /var/log/nginx/log/host.access.log  main;
+							  
+							      location / {
+							          root   /usr/share/nginx/html;
+							          index  index.html index.htm;
+							      }
+							  
+							      #error_page  404              /404.html;
+							  
+							      # redirect server error pages to the static page /50x.html
+							      #
+							      error_page   500 502 503 504  /50x.html;
+							      location = /50x.html {
+							          root   /usr/share/nginx/html;
+							      }
+							  
+							      # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+							      #
+							      #location ~ \.php$ {
+							      #    proxy_pass   http://127.0.0.1;
+							      #}
+							  
+							      # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+							      #
+							      #location ~ \.php$ {
+							      #    root           html;
+							      #    fastcgi_pass   127.0.0.1:9000;
+							      #    fastcgi_index  index.php;
+							      #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+							      #    include        fastcgi_params;
+							      #}
+							  
+							      # deny access to .htaccess files, if Apache's document root
+							      # concurs with nginx's one
+							      #
+							      #location ~ /\.ht {
+							      #    deny  all;
+							      #}
+							  }
+							  
+							  ```
+				- （4）启动和停止
+				  collapsed:: true
+					- 本虚拟机是利用docker镜像方式安装nginx的（在root下）
+					- 启动：docker start nginx
+					- 关闭：docker stop nginx
+					- 查看：docker nginx -t/-v
+				- （5）进程查看
+				  collapsed:: true
+					- ps -ef | grep nginx
+					- master进程：由nginx.conf配置
+					- worker进程
+					- 例子：
+						- 查看nginx相关的进程：
+						- ![image.png](../assets/image_1687768790530_0.png)
+						- 上述代码的含义：
+						- ![image.png](../assets/image_1687768815833_0.png)
+						- 寻找nginx.pid这个文件
+						- ![image.png](../assets/image_1687769042275_0.png)
+						- 这个进程的id和master一致
+				- （6）重新加载
+				  collapsed:: true
+					- docker restart nginx
+				- （7）修改配置文件：回到vm环境，通过修改/mydata/nginx/conf对nginx修改配置
+				  collapsed:: true
+					- 原因：nginx的bash中没有vi、nano等编辑器
+					- 注意：修改之后要restart
+					- 例子：
+						- 修改配置文件/mydata/nginx/conf/nginx.conf，进程数修改成2
+						- 此时进行进程的查询
+						- ![image.png](../assets/image_1687769762171_0.png)
+						- woker进程数改变，master进程有且只有1个
+				- （8）
+					-
+			- 配置文件结构
+				- ![image.png](../assets/image_1687770286537_0.png)
+				- 一般配置部分就在http块
+			- 具体应用
+				- ## 部署静态资源
+					- nginx作为静态服务器（html，css，js）
+					- 原因：nginx处理静态资源比Tomcat效率高（更专注静态资源处理；静态资源高速缓存机制；轻量级和低资源消耗）
+					- 做法：将静态文件复制到nginx安装的html目录中即可
+					- 文件挂载：/mydata/nginx/html:/usr/share/nginx/html
+					- 配置文件
+						- ![image.png](../assets/image_1687771391645_0.png)
+						- server可以设置多个，比如说设置端口81访问到不同的资源
+				- ## 反向代理
+					- 配置文件：
+					  collapsed:: true
+						- ![image.png](../assets/image_1687771770368_0.png)
+					- （1）配置一台新的虚拟机，路径在`C:\Users\15796\my_vagrant_project`
+					- （2）配置文件设置主机和虚拟机的共享文件夹：
+						- 注意：
+							- ```
+							  使用默认路径
+							  文件夹修改要reload重启vagrant
+							  ```
+					- （3）将jar包用jdk运行`java -jar helloworld-1.0-SNAPSHOT.jar`
+						- 注意：
+						- ```
+						  运行之前要用docker启动nginx才行
+						  ```
+					- （4）在浏览器输入`http://192.168.33.10:8080/hello`，显示8080，测试jar包可以运行
+						- ```
+						  为什么不是配置文件中的server块配置的listen 80？
+						  因为在程序中配置了监听的是8080端口
+						  这个程序中的配置文件:application.yml{
+						  	server:
+						      	port:8080
+						  }
+						  ```
+					- （5）在`192.168.33.11`虚拟机上配置nginx【docker restart nginx】
+						- ![image.png](../assets/image_1687831318264_0.png){:height 266, :width 645}
+						- ```
+						  注意！！！
+						  端口号只能设置成80，这是创建nginx的docker时配置的
+						  一旦确定就不能修改了
+						  ```
+						- ![image.png](../assets/image_1687835027480_0.png)
+						- ![image.png](../assets/image_1687835058974_0.png)
+						- ```
+						  nginx配置文件中是80，浏览器输入的端口是81
+						  ```
+					- （6）在浏览器中输入`http://192.168.33.11/hello`或者`http://192.168.33.11:80/hello`
+						- 显示8080
+				- ## 负载均衡
+					- 配置文件（server一般是不同的ip，在这里用不同的port区分）
+						- 【默认】轮询算法
+						- ![image.png](../assets/image_1687835414908_0.png)
+					- （1）启动两个jar包
+					- （2）配置反向代理
+					- （3）在浏览器上输入URI，轮流显示8080和8081
+					- 负载均衡策略
+						- ![image.png](../assets/image_1687836334991_0.png)
+						- weight数值越大分发几率越高
+						- ![image.png](../assets/image_1687836375672_0.png)
+						- 根据ip，url的方式是计算出hash值，根据hash值分发
+		- ## Tomcat
+			- ### 基础
+				- 1-软件架构
+				  collapsed:: true
+					- C/S ：客户端/服务端
+					- B/S ：浏览器/服务端
+				- 2-资源
+				  collapsed:: true
+					- 静态资源：html，css，js，jpg，所有用户得到结果一样，浏览器只能解析静态资源
+					- 动态资源：servlet，jsp，php，不同用户得到的结果不一样，转成静态给服务器
+				- 3-网络通信三要素
+					- IP
+					- 端口：默认80
+					- 协议：
+					  collapsed:: true
+						- tcp
+						- udp
+				- 4-服务器
+					- 服务器软件
+					- web服务器软件：可以部署web项目，处理请求
+					- 例子：Tomcat、webLogic、webSphere，JBOSS
+				- 5-安装
+					- bat：windows
+					- sh：linux
+				- 6-IDEA中使用
+					- ```
+					  https://www.bilibili.com/video/BV1YR4y1G7j2?spm_id_from=333.880.my_history.page.click
+					  ```
+			-
 	- 消息队列
 	- 缓存
 	- 计算机基础
@@ -6296,8 +7708,9 @@
 						- ![image.png](../assets/image_1681806673704_0.png){:height 220, :width 380}
 					- 2-步骤
 					  collapsed:: true
+						- `E:/我的文件_E/开发准备/13-商城项目/谷粒商城/课件和文档/基础篇/课件/01、分布式基础&项目环境搭建.pdf`
 						- 【1】VMware Workstation Pro 虚拟机软件
-						- 【2】centos linux系统镜像
+						- 【2】centos linux系统镜像---vagrant管理工具
 						- 【3】网卡设置
 						  collapsed:: true
 							- ![image.png](../assets/image_1681826794369_0.png){:height 384, :width 687}
@@ -6305,10 +7718,14 @@
 						  collapsed:: true
 							- ![image.png](../assets/image_1681826927304_0.png){:height 391, :width 748}
 							-
-						- 【5】软件安装（P132）
-						  collapsed:: true
+						- 【5】软件安装（P132）：在这之前安装docker
 							- ![image.png](../assets/image_1681829020554_0.png){:height 250, :width 380}
 							-
+				- root
+					- root -- vagrant
+					- 启动：vagrant up
+					- 在本地电脑上使用远程VM：vagrant ssh
+					-
 				- 命令
 				  collapsed:: true
 					- ## 文件目录
@@ -6379,6 +7796,7 @@
 	- 开发工具
 	  collapsed:: true
 		- ## Maven
+		  collapsed:: true
 			- ## 配置文件
 				-
 		- ## Gradle
@@ -6397,7 +7815,7 @@
 					- ![image.png](../assets/image_1682346382283_0.png)
 				- #### 检查文件正确性
 					- ![image.png](../assets/image_1682346397203_0.png)
-				- #### 启动和停止（在sbin目录下）
+				- #### 启动和停止（在nginx/sbin目录下）
 					- ![image.png](../assets/image_1682346634688_0.png)
 					- 查看进程
 					  collapsed:: true
@@ -6444,11 +7862,11 @@
 					- 介绍：
 					  collapsed:: true
 						- ![image.png](../assets/image_1682348619363_0.png)
-					- 配置：`conf/ nginx.conf`
+					- 配置：`conf/ nginx.conf` 用不同的端口号区分
 						- ![image.png](../assets/image_1682348808420_0.png)
 						- ![image.png](../assets/image_1682348911904_0.png)
 						- ![image.png](../assets/image_1682348929454_0.png)
-						-
+						- 根据IP分配、url分配：被分配的是固定的
 					-
 						-
 		- ## Git
@@ -6605,6 +8023,7 @@
 							- **方式二：右下角**
 						- #### （2）将分支推送到远程仓库  push
 						- #### （3）合并（merge into ...）
+		- ## vagrant
 	- 系统设计
 	  collapsed:: true
 		- ## 基础
@@ -6624,6 +8043,9 @@
 		- Arraylist源码
 		- hashmap源码
 		- concurrenthashmap源码
+		-
+	- 书单
+		- 数据密集型应用系统设计
 		-
 - 求职
   collapsed:: true
@@ -9186,6 +10608,21 @@
 - 读书和电影
   collapsed:: true
 	- 书单
+	  collapsed:: true
+		- 认知红利
+		  collapsed:: true
+			- 注意力是人最宝贵的财富
+			- 高能量、充分利用注意力：
+			  collapsed:: true
+				- （1）聚焦有价值的事
+				- （2）亲密关系
+				- （3）寻找新的趋势
+				- （4）自我成长
+			- 售卖时间的方式：
+				- 工作加班的本质是零售时间，占用的是原本可以提升自己的时间
+				- 批发时间
+				- 买卖时间
+				- 收时间税（平台）
 	- 电影
 	  collapsed:: true
 		- 黑客帝国
@@ -9205,13 +10642,93 @@
 - 研究生
   collapsed:: true
 	- 组会
+	- 毕设
+		- ## RRT算法
+			- #### 梳理
+				- 基于扩展域的RRT-1-人工势场法产生采样空间
+				  collapsed:: true
+					- ![image.png](../assets/image_1688607262858_0.png){:height 392, :width 236}
+					- 人工给障碍物和目标点建立斥力势场和引力势场，之后把这些势场进行组合，使得运动体向着总势场减少的方向移动。
+					- 引力场函数
+					  collapsed:: true
+						- ![image.png](../assets/image_1688607337963_0.png){:height 188, :width 704}
+					- 斥力场函数
+					  collapsed:: true
+						- ![image.png](../assets/image_1688607378152_0.png)
+					- 总势场：
+					  collapsed:: true
+						- ![image.png](../assets/image_1688607481985_0.png){:height 42, :width 389}
+					- 改进人工势场法【某处势能为0陷入局部最小值的缺点】--势能函数添加调节因子
+					  background-color:: #497d46
+						- 原理：运动体靠近目标点的时候，增强引力势能的影响，同时降低斥力势能的影响，一直到运动体到达目标点
+						- 改进斥力场函数
+							- ![image.png](../assets/image_1688607628420_0.png)
+				- 【全局】结合A*算法的 RRT算法路径规划研究
+					- （1）A*算法【启发式搜索算法】-- 减少RRT算法的代价
+						- 节点的优先级根据代价函数排列
+						- 改进在**RRT算法的采样点选取阶段**
+					- （2）贪心+贝塞尔曲线进行路径二次优化
+						-
+				- 【局部+预测】
+			- #### 改进
+				- （1）采样空间--采样点选取
+				- （2）重新布置随机树
+					- 路径曲线优化
+					- 重新选择父节点
+				- 对比指标
+				  collapsed:: true
+					- 计算时间 路径长度 节点数量
+					- ![image.png](../assets/image_1688575399638_0.png)
+					- ![image.png](../assets/image_1688575370578_0.png)
+					- ![image.png](../assets/image_1688575436915_0.png)
+					- ![image.png](../assets/image_1688575451802_0.png)
+					-
+				- 算法
+					- RRT--高维空间优势
+					  collapsed:: true
+						- `https://zhuanlan.zhihu.com/p/66047152`
+					- RRT connect--在RRT基础上加两棵树双向抖索的引导策略，并且在生长方式的基础上加上贪婪策略加快搜索速度，减少空白区无用搜索
+					  collapsed:: true
+						- 步骤：
+							- ```
+							  步骤:
+							  
+							  初始化两个树：树T1和树T2，分别将起点作为树的根节点加入。
+							  重复以下迭代步骤，直到两棵树相连或达到最大迭代次数： a. 在树T1中生成随机采样点Q_rand，可以通过均匀分布在搜索空间中进行采样，或者使用启发式方法生成。 b. 在树T1中找到距离Q_rand最近的节点Q_near1。 c. 在树T2中找到与Q_near1距离最近的节点Q_near2。 d. 从Q_near1向Q_near2延伸，生成新的节点Q_new，并确保Q_new不与障碍物相交。 e. 如果Q_new与Q_near2之间没有障碍物，将Q_new添加到树T1，并将Q_new设为Q_near1的子节点。 f. 如果Q_new与Q_near2之间有障碍物，将Q_new添加到树T2，并将Q_new设为Q_near2的子节点。 g. 如果Q_new被添加到树T1，则检查是否与树T2的节点相连，如果是，则得到一条路径连接两棵树。 h. 如果Q_new被添加到树T2，则检查是否与树T1的节点相连，如果是，则得到一条路径连接两棵树。 i. 交换树T1和树T2的角色。
+							  如果两棵树相连，通过它们的连接关系从终点反向回溯至起点，得到最优路径。
+							  如果达到最大迭代次数，停止算法，返回目前搜索得到的最优路径。
+							  ```
+						- 改进：
+							- 起点和终点两边同时生成树
+					- RRT*--在RRT基础上增加启发式策略和贪婪思想，针对RRT和RRT connect的随机采样的搜索路径，采用代价函数来选取父节点，每次迭代后重新连接现有树上节点保证计算复杂度。
+						- `bilibili`
+						- 改进：
+							- 引入代价函数
+							- 重新为newcoor选择父节点的过程，一边生长一边优化
+							- 重新布线随机树的过程
+					- RRT* smart -- 在RRT*基础上，smart采样（利用障碍物边缘信息），节点数量大大减少
+					  collapsed:: true
+						- `https://www.baltamatica.com/community/sposts/detail/2b57319d-eca0-a011-236c-7b308251b3e0.html`
+						- 改进：
+							- 从叶子节点开始判定是否能无障碍连接到父节点，产生信标
+							- smart采样：在信标周围一定距离生成一定数量的样本，采样偏向于这些信标，因为它们提供了障碍物边缘拐点的线索。因此，信标需要被最大节点（代价最大的节点）包围，来优化这些拐弯处的路径，可以**RRT*基础上以更少的迭代次数达到最优解**。
+								- 原因：smart采样可以更容易覆盖到路径规划中的关键拐点附近区域，减少空白区间无用搜索，减少需要拓展的节点数量
+							-
+					- A*算法【redblobgames--python】
+					  collapsed:: true
+						- ![image.png](../assets/image_1688609575422_0.png){:height 204, :width 463}
+						- 广度优先算法是没有方向性的，需要完成整个地图
+						- A*算法选择当前代价最小的方块进行下一轮的搜索
+						-
+					-
 	- 实验室项目
 	  collapsed:: true
 		- ## 海浪仿真
 			- #### 真实感水体渲染技术总结
 			  collapsed:: true
-				- `https://zhuanlan.zhihu.com/p/95917609`
+				- https://zhuanlan.zhihu.com/p/95917609
 			- ### Gerstner波
+			  collapsed:: true
 				- ### 公式
 				  collapsed:: true
 					- #### 冯开平--基于 3D Gerstner 水波的实时模拟研究
@@ -9231,6 +10748,7 @@
 						- ![image.png](../assets/image_1686145693559_0.png)
 					-
 				- #### 代码阅读
+				  collapsed:: true
 					- ![image.png](../assets/image_1685522411386_0.png){:height 197, :width 656}
 					- 顶点着色器：修改顶点的位置和法向量
 						- ```
@@ -9405,6 +10923,7 @@
 				- #### 纹理贴图
 				- #### 粒子系统
 			- ### 改进Gerstner波
+			  collapsed:: true
 				- #### 修正参数
 				  collapsed:: true
 					- ![image.png](../assets/image_1686150665925_0.png){:height 143, :width 656}
@@ -9417,7 +10936,39 @@
 					-
 				- #### 波的叠加   ？？
 				-
-		- ## RRT算法
+			- ### 源码修改
+			  collapsed:: true
+				- github参考：https://github.com/madblade/waves-gerstner
+				- 关于threejs执行流程
+				  collapsed:: true
+					- 遍历场景中的所有物体，并计算每个物体的 modelViewMatrix、normalMatrix 和 worldMatrix。
+					- 对摄像机进行透视矩阵变换，并计算视图矩阵 viewMatrix 和投影矩阵 projectionMatrix。
+					- 遍历所有灯光计算出其位置、颜色等属性值。
+					- 剔除视锥体之外的物体和灯光，提高渲染效率。
+					- 根据材质对物体进行排序，按需进行合并操作。
+					- 遍历所有物体，对其进行渲染。
+					- 合成所有渲染结果生成最终画面。
+					- 预处理阶段是 Three.js 渲染流程中的第一步，在遍历场景中的所有物体之前执行。比如编译着色器代码、准备材质、构建场景图、计算光源等等，以优化运行时的性能和质量。
+				- onBeforeCompile方法执行顺序问题
+				  collapsed:: true
+					- onBeforeCompile方法是在预处理阶段被调用，而预处理阶段又在以上所有流程之前，那为什么
+					  ```
+					  this.water.material.onBeforeCompile = (shader) => {
+					        shader.uniforms = THREE.UniformsUtils.clone(mirrorShader.uniforms);
+					        console.log(shader.uniforms);
+					        console.log("shader.uniforms*************************");
+					        shader.vertexShader = mirrorShader.vertexShader;
+					        shader.fragmentShader = mirrorShader.fragmentShader;
+					        shader.uniforms.size.value = 10.0;
+					      }
+					  ```
+					  这段代码执行顺序比较靠后呢?
+					- `onBeforeCompile`  方法是在预处理阶段被调用的，但是它不是在 Three.js 渲染流程的预处理阶段中被调用的，而是在构建材质（Material）时进行处理的。
+					- 每当创建一个新的材质时，都会调用材质的  `onBeforeCompile`  方法。这个方法允许用户自定义着色器代码，即在渲染过程之前修改着色器代码。因此，通过  `onBeforeCompile`  方法可以在预处理阶段对着色器进行修改以达到某些特定的效果。
+					- 在您给出的代码中， `this.water.material.onBeforeCompile`  方法是在构造水面材质（Water）时被调用的。这里使用了  `onBeforeCompile`  方法来自定义水面材质的着色器代码。具体来说，将  `mirrorShader`  的顶点着色器和片段着色器复制到当前着色器对象中，并使用  `shader.uniforms`  来更新材质的 Uniform 变量。最后，将  `size`  的值设置为 10.0。
+					- 总之，虽然  `onBeforeCompile`  方法是在预处理阶段被调用的，但是他实际上是在 Three.js 中材质构建阶段进行处理的，因此在以上所有渲染过程之前是不正确的。
+					-
+				-
 	- 党务
 	  collapsed:: true
 		- 入党志愿书
